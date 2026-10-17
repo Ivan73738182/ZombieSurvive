@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Signed APK
 
 on:
   push:
@@ -17,14 +17,27 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Decode Keystore
+      run: |
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/zombiek.keystore
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug
+    - name: Build Release APK
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        ./gradlew assembleRelease \
+          -Pandroid.injected.signing.store.file=$(pwd)/app/zombiek.keystore \
+          -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+          -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+          -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: ZombieSurvive-Debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: ZombieSurvive-Signed
+        path: app/build/outputs/apk/release/app-release.apk
