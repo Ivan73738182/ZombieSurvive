@@ -1,30 +1,27 @@
 package com.ivangames.zombiesurvive
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import android.view.WindowManager
-import android.graphics.Color
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Убираем статус-бар для полного экрана
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        // Скрываем системные панели
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
 
-        // Пока просто выводим текст по центру
-        val textView = TextView(this).apply {
-            text = "ZombieSurvive\n\nПроект успешно собран!\nСкоро здесь будет игра."
-            textSize = 24f
-            setTextColor(Color.WHITE)
-            setBackgroundColor(Color.BLACK)
-            gravity = android.view.Gravity.CENTER
-        }
-        
-        setContentView(textView)
+        // Переходим в меню
+        val intent = Intent(this, MenuActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
