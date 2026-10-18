@@ -20,12 +20,11 @@
         android:shadowDy="3"
         android:shadowRadius="5" />
 
-    <!-- Кнопки по центру, но сдвинуты вверх -->
+    <!-- Кнопки ровно по центру экрана -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="60dp" 
         android:orientation="vertical"
         android:gravity="center">
 
