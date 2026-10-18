@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:text="ZombieSurvive"
         android:textColor="#FFD700"
         android:textSize="40sp"
@@ -20,11 +20,12 @@
         android:shadowDy="3"
         android:shadowRadius="5" />
 
-    <!-- Кнопки ровно по центру экрана -->
+    <!-- Кнопки строго под логотипом -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="140dp"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -43,7 +44,7 @@
             android:id="@+id/btnSettings"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:text="НАСТРОЙКИ"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -55,7 +56,7 @@
             android:id="@+id/btnLan"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:text="LAN"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -67,7 +68,7 @@
             android:id="@+id/btnExit"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:text="ВЫХОД"
             android:textSize="18sp"
             android:textStyle="bold"
