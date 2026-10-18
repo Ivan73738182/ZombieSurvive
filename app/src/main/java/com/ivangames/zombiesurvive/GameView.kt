@@ -6,94 +6,186 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class GameView(context: Context) : View(context) {
     private val paint = Paint()
     
-    // Координаты игрока (в пикселях)
-    private var playerX = 500f
-    private var playerY = 500f
-    private val playerRadius = 40f
+    // Для плавности (дельта-время)
+    private var lastTime = 0L
+    
+    // Данные игрока (мировые координаты)
+    private var playerX = 0f
+    private var playerY = 0f
+    private val playerSpeed = 250f // пикселей в секунду
+    private val playerRadius = 30f
 
-    // Переменные для джойстика
-    private var joyX = 200f
-    private var joyY = 700f // Примерно левый нижний угол
-    private val joyRadius = 100f
-    private var isTouchingJoy = false
+    // Камера (сдвиг относительно игрока)
+    private var camX = 0f
+    private var camY = 0f
+
+    // Левый джойстик (ходьба)
+    private var joyLeftX = 200f
+    private var joyLeftY = 500f
+    private val joyRadius = 120f
+    private var isTouchingLeft = false
     private var moveX = 0f
     private var moveY = 0f
+
+    // Правый джойстик (стрельба)
+    private var joyRightX = 1000f
+    private var joyRightY = 500f
+    private var isTouchingRight = false
+
+    // Пули
+    class Bullet(var x: Float, var y: Float, var dx: Float, var dy: Float) {
+        val speed = 800f // пикселей в секунду
+        val radius = 8f
+    }
+    private val bullets = mutableListOf<Bullet>()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // 1. Рисуем пол (тёмно-серый фон)
-        canvas.drawColor(Color.parseColor("#1A1A1A"))
+        // Время для плавности
+        val currentTime = System.currentTimeMillis()
+        val deltaTime = if (lastTime == 0L) 0f else (currentTime - lastTime) / 1000f
+        lastTime = currentTime
 
-        // 2. Рисуем игрока (чёрный кружок с белой обводкой)
+        // 1. Движение игрока
+        if (isTouchingLeft) {
+            playerX += moveX * playerSpeed * deltaTime
+            playerY += moveY * playerSpeed * deltaTime
+        }
+
+        // 2. Движение камеры (игрок всегда в центре экрана)
+        camX = playerX - width / 2f
+        camY = playerY - height / 2f
+
+        // 3. Рисуем землю (сетку)
+        canvas.drawColor(Color.parseColor("#1A1A1A")) // Темный фон
+        paint.color = Color.parseColor("#333333")
+        paint.strokeWidth = 2f
+        val gridSize = 100f
+        // Рисуем линии сетки, чтобы чувствовать движение
+        val startX = (camX / gridSize).toInt() * gridSize
+        val startY = (camY / gridSize).toInt() * gridSize
+        for (i in -10..20) {
+            val x = startX + i * gridSize - camX
+            val y = startY + i * gridSize - camY
+            canvas.drawLine(x, 0f, x, height.toFloat(), paint)
+            canvas.drawLine(0f, y, width.toFloat(), y, paint)
+        }
+
+        // 4. Пули (и их движение)
+        paint.color = Color.YELLOW
+        val iterator = bullets.iterator()
+        while (iterator.hasNext()) {
+            val bullet = iterator.next()
+            bullet.x += bullet.dx * bullet.speed * deltaTime
+            bullet.y += bullet.dy * bullet.speed * deltaTime
+            
+            // Рисуем пулю
+            canvas.drawCircle(bullet.x - camX, bullet.y - camY, bullet.radius, paint)
+            
+            // Удаляем, если улетела далеко
+            if (Math.abs(bullet.x - playerX) > 2000 || Math.abs(bullet.y - playerY) > 2000) {
+                iterator.remove()
+            }
+        }
+
+        // 5. Игрок (черный круг с белой обводкой)
+        val screenPlayerX = playerX - camX
+        val screenPlayerY = playerY - camY
         paint.color = Color.BLACK
-        canvas.drawCircle(playerX, playerY, playerRadius, paint)
+        canvas.drawCircle(screenPlayerX, screenPlayerY, playerRadius, paint)
         paint.color = Color.WHITE
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 5f
-        canvas.drawCircle(playerX, playerY, playerRadius, paint)
+        canvas.drawCircle(screenPlayerX, screenPlayerY, playerRadius, paint)
         paint.style = Paint.Style.FILL
 
-        // 3. Рисуем джойстик ходьбы (слева)
-        paint.color = Color.parseColor("#40FFFFFF") // Полупрозрачный белый
-        canvas.drawCircle(joyX, joyY, joyRadius, paint) // База джойстика
-        
+        // 6. Джойстики (фиксированные на экране)
+        // Левый
+        paint.color = Color.parseColor("#40FFFFFF")
+        canvas.drawCircle(joyLeftX, joyLeftY, joyRadius, paint)
         paint.color = Color.WHITE
-        canvas.drawCircle(joyX + moveX, joyY + moveY, joyRadius / 2, paint) // Ручка джойстика
+        canvas.drawCircle(joyLeftX + moveX * joyRadius, joyLeftY + moveY * joyRadius, joyRadius / 2, paint)
+
+        // Правый
+        paint.color = Color.parseColor("#40FF0000") // Красноватый для стрельбы
+        canvas.drawCircle(joyRightX, joyRightY, joyRadius, paint)
+        paint.color = Color.RED
+        canvas.drawCircle(joyRightX, joyRightY, joyRadius / 2, paint) // Ручка пока в центре
+
+        invalidate() // Перерисовать
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        // Размещаем джойстики по краям экрана
+        joyLeftX = joyRadius + 80f
+        joyLeftY = h - joyRadius - 80f
+        
+        joyRightX = w - joyRadius - 80f
+        joyRightY = h - joyRadius - 80f
+        
+        // Центрируем игрока при старте
+        playerX = w / 2f
+        playerY = h / 2f
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                // Проверяем, нажали ли мы на джойстик
-                if (Math.hypot((event.x - joyX).toDouble(), (event.y - joyY).toDouble()) < joyRadius) {
-                    isTouchingJoy = true
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                // Проверяем, куда нажали (по индексу пальца)
+                val pointerIndex = event.actionIndex
+                val x = event.getX(pointerIndex)
+                val y = event.getY(pointerIndex)
+                
+                if (Math.hypot((x - joyLeftX).toDouble(), (y - joyLeftY).toDouble()) < joyRadius * 1.5) {
+                    isTouchingLeft = true
+                } else if (Math.hypot((x - joyRightX).toDouble(), (y - joyRightY).toDouble()) < joyRadius * 1.5) {
+                    isTouchingRight = true
+                    shoot(x, y)
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (isTouchingJoy) {
-                    // Вычисляем вектор движения
-                    var dx = event.x - joyX
-                    var dy = event.y - joyY
+                // Обрабатываем движение для левого джойстика
+                if (isTouchingLeft) {
+                    val x = event.getX(0)
+                    val y = event.getY(0)
+                    var dx = x - joyLeftX
+                    var dy = y - joyLeftY
                     val distance = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
                     
-                    // Ограничиваем ручку джойстика радиусом
                     if (distance > joyRadius) {
                         dx = (dx / distance) * joyRadius
                         dy = (dy / distance) * joyRadius
                     }
-                    
-                    moveX = dx
-                    moveY = dy
-                    
-                    // Двигаем игрока (пока просто напрямую)
-                    playerX += moveX * 0.05f
-                    playerY += moveY * 0.05f
-                    
-                    invalidate() // Перерисовать экран
+                    moveX = dx / joyRadius
+                    moveY = dy / joyRadius
                 }
             }
-            MotionEvent.ACTION_UP -> {
-                // Отпустили палец — джойстик в центр, игрок стоит
-                isTouchingJoy = false
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                // Отпустили палец
+                isTouchingLeft = false
+                isTouchingRight = false
                 moveX = 0f
                 moveY = 0f
-                invalidate()
             }
         }
         return true
     }
 
-    // Этот метод нужен, чтобы джойстик был в углу, даже если экран повернут
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        joyX = joyRadius + 50f
-        joyY = h - joyRadius - 50f // Внизу слева
-        playerX = w / 2f
-        playerY = h / 2f
+    // Стрельба (пока просто вправо, потом сделаем направление)
+    private fun shoot(touchX: Float, touchY: Float) {
+        // Пока стреляем вправо для теста
+        val dx = 1f 
+        val dy = 0f
+        bullets.add(Bullet(playerX, playerY, dx, dy))
     }
 }
