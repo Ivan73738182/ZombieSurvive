@@ -4,12 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.widget.TextView
+import android.graphics.Color
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Скрываем системные панели
         window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -19,9 +20,20 @@ class MainActivity : AppCompatActivity() {
             or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
 
-        // Переходим в меню
-        val intent = Intent(this, MenuActivity::class.java)
-        startActivity(intent)
-        finish()
+        try {
+            // Пробуем открыть меню
+            val intent = Intent(this, MenuActivity::class.java)
+            startActivity(intent)
+            finish()
+        } catch (e: Exception) {
+            // Если упало — показываем ошибку на экране
+            val textView = TextView(this).apply {
+                text = "ОШИБКА ПРИ ЗАПУСКЕ:\n\n${e.message}\n\n${e.stackTraceToString()}"
+                textSize = 16f
+                setTextColor(Color.RED)
+                setBackgroundColor(Color.BLACK)
+            }
+            setContentView(textView)
+        }
     }
 }
