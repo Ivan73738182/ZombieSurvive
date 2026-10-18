@@ -1,5 +1,6 @@
 package com.ivangames.zombiesurvive
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -11,9 +12,15 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
         hideSystemUI()
 
+        // Кнопка ИГРАТЬ
+        findViewById<Button>(R.id.btnPlay).setOnClickListener {
+            val intent = Intent(this, GameActivity::class.java)
+            startActivity(intent)
+        }
+
         // Кнопка выхода
         findViewById<Button>(R.id.btnExit).setOnClickListener {
-            finishAffinity() // Закрывает приложение
+            finishAffinity()
         }
     }
 

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/sym_def_app_icon"
@@ -21,12 +19,10 @@
             </intent-filter>
         </activity>
 
-        <!-- ВОТ ОНА, НАША МЕНЮШКА -->
-        <activity
-            android:name=".MenuActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+        <activity android:name=".MenuActivity" android:exported="false" android:screenOrientation="landscape" />
+        
+        <!-- НАША НОВАЯ ИГРА -->
+        <activity android:name=".GameActivity" android:exported="false" android:screenOrientation="landscape" />
 
     </application>
-
 </manifest>
