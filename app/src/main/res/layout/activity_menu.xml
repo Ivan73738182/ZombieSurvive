@@ -20,12 +20,12 @@
         android:shadowDy="3"
         android:shadowRadius="5" />
 
-    <!-- Кнопки по центру (с отступом сверху, чтобы не лезли на логотип) -->
+    <!-- Кнопки по центру, но сдвинуты вверх -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="80dp"
+        android:layout_marginBottom="60dp" 
         android:orientation="vertical"
         android:gravity="center">
 
@@ -44,7 +44,7 @@
             android:id="@+id/btnSettings"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="НАСТРОЙКИ"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -56,7 +56,7 @@
             android:id="@+id/btnLan"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="LAN"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -68,7 +68,7 @@
             android:id="@+id/btnExit"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="ВЫХОД"
             android:textSize="18sp"
             android:textStyle="bold"
