@@ -4,75 +4,76 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_menu">
 
-    <!-- Логотип -->
+    <!-- Логотип сверху -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="ZombieSurvive"
         android:textColor="#FFD700"
-        android:textSize="48sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         android:shadowColor="#FF0000"
         android:shadowDx="3"
         android:shadowDy="3"
         android:shadowRadius="5" />
 
-    <!-- Кнопки по центру -->
+    <!-- Кнопки по центру (с отступом сверху, чтобы не лезли на логотип) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         android:gravity="center">
 
         <Button
             android:id="@+id/btnPlay"
-            android:layout_width="280dp"
-            android:layout_height="65dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:text="ИГРАТЬ"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#00FFFF"
-            android:backgroundTint="#40000000"
+            android:backgroundTint="#60000000"
             android:stateListAnimator="@null" />
 
         <Button
             android:id="@+id/btnSettings"
-            android:layout_width="280dp"
-            android:layout_height="65dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:layout_marginTop="12dp"
             android:text="НАСТРОЙКИ"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#00FFFF"
-            android:backgroundTint="#40000000"
+            android:backgroundTint="#60000000"
             android:stateListAnimator="@null" />
 
         <Button
             android:id="@+id/btnLan"
-            android:layout_width="280dp"
-            android:layout_height="65dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:layout_marginTop="12dp"
             android:text="LAN"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#00FFFF"
-            android:backgroundTint="#40000000"
+            android:backgroundTint="#60000000"
             android:stateListAnimator="@null" />
 
         <Button
             android:id="@+id/btnExit"
-            android:layout_width="280dp"
-            android:layout_height="65dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             android:layout_marginTop="12dp"
             android:text="ВЫХОД"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#AAFFFFFF"
-            android:backgroundTint="#40000000"
+            android:backgroundTint="#60000000"
             android:stateListAnimator="@null" />
 
     </LinearLayout>
